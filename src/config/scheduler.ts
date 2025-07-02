@@ -1,20 +1,28 @@
-import cron from 'node-cron';
-//import { PriceWorker } from '../workers/price-worker';
-//import { getProducts } from '../services/PriceService';
-import { Config } from '@/config';
+import cron from "node-cron";
+import { PriceWorker } from "@/workers/price-worker";
+import { PriceService } from "@/services/PriceService";
+import { type Product } from "@/models";
 
-/**
- * Schedule jobs for each product based on its interval_minutes.
- */
-export async function scheduleJobs() {
-    // const products = await getProducts();
-    //
-    // products.forEach((product) => {
-    //     const mins = product.interval_minutes || Config.scheduler.defaultInterval;
-    //     const cronExp = `*/${mins} * * * *`;
-    //
-    //     cron.schedule(cronExp, async () => {
-    //         await PriceWorker.check(product.id);
-    //     });
-    // });
+export async function scheduleJobs(): Promise<void> {
+  const priceService = new PriceService();
+  const products: Product[] = await priceService.getProducts();
+
+  for (const product of products) {
+    const minute: number = 240;
+
+    const cronExp = `*/${minute} * * * *`;
+
+    cron.schedule(cronExp, async () => {
+      console.log(
+        `🔄 Checking price for product #${product.id} at ${new Date().toISOString()}`,
+      );
+      try {
+        await PriceWorker.check(product.id);
+      } catch (err) {
+        console.error(`Error checking product ${product.id}:`, err);
+      }
+    });
+
+    console.log(`Scheduled product ${product.id} with cron '${cronExp}'`);
+  }
 }

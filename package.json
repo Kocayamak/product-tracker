@@ -14,11 +14,13 @@
     "chromedriver": "^138.0.0",
     "dotenv": "^17.0.1",
     "node-cron": "^4.2.0",
-    "selenium-webdriver": "^4.34.0"
+    "selenium-webdriver": "^4.34.0",
+    "typeorm": "^0.3.25"
   },
   "devDependencies": {
     "@types/node": "^24.0.8",
     "@types/selenium-webdriver": "^4.1.28",
+    "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
